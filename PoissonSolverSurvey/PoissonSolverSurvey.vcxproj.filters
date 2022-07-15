@@ -38,8 +38,10 @@
     <ClInclude Include="ImageHelper.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Common.cuh" />
   </ItemGroup>
   <ItemGroup>
     <CudaCompile Include="Jacobi.cu" />
+    <CudaCompile Include="ConjugateGradient.cu" />
   </ItemGroup>
 </Project>

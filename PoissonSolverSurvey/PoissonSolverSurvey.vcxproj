@@ -133,12 +133,14 @@
     <ClCompile Include="stb.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Common.cuh" />
     <ClInclude Include="ImageHelper.h" />
     <ClInclude Include="stb_image.h" />
     <ClInclude Include="stb_image_resize.h" />
     <ClInclude Include="stb_image_write.h" />
   </ItemGroup>
   <ItemGroup>
+    <CudaCompile Include="ConjugateGradient.cu" />
     <CudaCompile Include="Jacobi.cu" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
