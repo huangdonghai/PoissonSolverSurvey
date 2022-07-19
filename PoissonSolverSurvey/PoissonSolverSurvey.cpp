@@ -34,7 +34,7 @@ int main()
 
 	stbi_write_jpg(imageOut, width, height, n, poissonData, 80);
 
-	auto solved = dst.ConjudateGradientCuda(200);
+	auto solved = dst.ConjudateGradientCuda(2000);
 
 	auto solvedData = solved.ToBytes(1, &avarage, false);
 

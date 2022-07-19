@@ -139,8 +139,6 @@ cudaError_t conjugateGradientWithCuda(int numIters, int width, int height, int c
 	cudaMalloc((void**)&rrn, pixelDataSize);
 	cudaMalloc((void**)&pAp, pixelDataSize);
 
-	CudaCheckError();
-
 	cudaMemcpy(b, hostb, dataSize, cudaMemcpyHostToDevice);
 	// x0 = 0
 	cudaMemset(x, 0, dataSize);
@@ -149,10 +147,13 @@ cudaError_t conjugateGradientWithCuda(int numIters, int width, int height, int c
 	// p0 = r0
 	cudaMemcpy(p, r, dataSize, cudaMemcpyDeviceToDevice);
 
+	CudaCheckError();
+
 	// rr = r ⋅ r
 	int blockDim1 = 1024;
 	int gridDim1 = (pixelCount + blockDim1 - 1) / blockDim1;
-	dot<<<blockDim1, gridDim1, blockDim1*pixelDataSize>>>(r, r, rr, pixelCount);
+	dot<<<gridDim1, blockDim1, blockDim1*pixelDataSize>>>(r, r, rr, pixelCount); CudaCheckError();
+
 
 	dim3 blockDim3(32, 32, 1);
 	dim3 gridDim3(width, height, 1);
@@ -162,23 +163,22 @@ cudaError_t conjugateGradientWithCuda(int numIters, int width, int height, int c
 	for (int k = 0; k < numIters; k++) {
 		// subscript n mean next = K+1
 		// Ap = A * p
-		Amulv<<<blockDim3, gridDim3>>>(p, Ap, width, height);
+		Amulv<<<gridDim3, blockDim3>>>(p, Ap, width, height); CudaCheckError();
 		// α = r ⋅ r /(p ⋅ A * p)
-		dot<<<blockDim1, gridDim1, blockDim1*pixelDataSize>>>(p, Ap, pAp, pixelCount);
-		div<<<1,1>>>(rr, pAp, alpha, 1);
+		dot<<<gridDim1, blockDim1, blockDim1*pixelDataSize>>>(p, Ap, pAp, pixelCount); CudaCheckError();
+		div<<<1,1>>>(rr, pAp, alpha, 1); CudaCheckError();
 		// xn = x + α * p
-		addmul<<<blockDim1, gridDim1>>>(x, alpha, p, x, pixelCount);
+		addmul<<<gridDim1, blockDim1>>>(x, alpha, p, x, pixelCount); CudaCheckError();
 		// rn = r - α * A * p
-		submul<<<blockDim1, gridDim1>>>(r, alpha, Ap, r, pixelCount);
+		submul<<<gridDim1, blockDim1>>>(r, alpha, Ap, r, pixelCount); CudaCheckError();
 		// β = rn ⋅ rn / r ⋅ r
-		dot<<<blockDim1, gridDim1, blockDim1*pixelDataSize>>>(r, r, rrn, pixelCount);
-		div<<<1,1>>>(rrn, rr, beta, 1);
+		dot<<<gridDim1, blockDim1, blockDim1*pixelDataSize>>>(r, r, rrn, pixelCount); CudaCheckError();
+		div<<<1,1>>>(rrn, rr, beta, 1); CudaCheckError();
 		// pn = rn + β * p
-		addmul<<<blockDim1, gridDim1>>>(r, beta, p, p, pixelCount);
+		addmul<<<gridDim1, blockDim1>>>(r, beta, p, p, pixelCount); CudaCheckError();
 
 		std::swap(rr, rrn);
 		CudaCheckError();
-
 	}
 
 	cudaDeviceSynchronize();
