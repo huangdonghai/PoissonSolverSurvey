@@ -78,8 +78,9 @@ public:
 	unsigned char *ToBytes(float scale=1, std::vector<float> *offset = nullptr, bool abs=false);
 
 	static bool PoissonFilter(FloatImage& dst, ByteImage& src);
-	FloatImage Jacobi(int numIters=100);
+	FloatImage JacobiCpu(int numIters=100);
 	FloatImage JacobiCuda(int numIters = 100);
+	FloatImage ConjudateGradientCuda(int numIters = 100);
 
 	float *Data() { return m_imageData; }
 

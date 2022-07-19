@@ -185,7 +185,7 @@ bool FloatImage::PoissonFilter(FloatImage& dst, ByteImage& src)
 	return true;
 }
 
-FloatImage FloatImage::Jacobi(int numIters)
+FloatImage FloatImage::JacobiCpu(int numIters)
 {
 	FloatImage temp1(m_width, m_height, m_channels);
 	FloatImage temp2(m_width, m_height, m_channels);
@@ -233,6 +233,12 @@ FloatImage FloatImage::Jacobi(int numIters)
 cudaError_t jacobiWithCuda(int numIters, int width, int height, int channels, const float* b, float* result);
 
 FloatImage FloatImage::JacobiCuda(int numIters)
+{
+	FloatImage temp1(m_width, m_height, m_channels);
+	jacobiWithCuda(numIters, m_width, m_height, m_channels, m_imageData, temp1.m_imageData);
+	return temp1;
+}
+FloatImage FloatImage::ConjudateGradientCuda(int numIters)
 {
 	FloatImage temp1(m_width, m_height, m_channels);
 	jacobiWithCuda(numIters, m_width, m_height, m_channels, m_imageData, temp1.m_imageData);

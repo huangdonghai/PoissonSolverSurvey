@@ -10,7 +10,11 @@ int main()
 {
     const char* imagePath = "yacht.jpg";
     const char* imageOut = "yacht_poisson.jpg";
-	const char* imageJacobi = "yacht_jacobi.jpg";
+#if 0
+	const char* imageSolved = "yacht_jacobi.jpg";
+#else
+	const char* imageSolved = "yacht_cg.jpg";
+#endif
 
     int width, height, n;
 
@@ -30,11 +34,11 @@ int main()
 
 	stbi_write_jpg(imageOut, width, height, n, poissonData, 80);
 
-	auto jacobi = dst.JacobiCuda(200000);
+	auto solved = dst.ConjudateGradientCuda(200);
 
-	auto jacobiData = jacobi.ToBytes(1, &avarage, false);
+	auto solvedData = solved.ToBytes(1, &avarage, false);
 
-	stbi_write_jpg(imageJacobi, width, height, n, jacobiData, 80);
+	stbi_write_jpg(imageSolved, width, height, n, solvedData, 80);
 
 	std::cout << "Hello World!\n";
 }
