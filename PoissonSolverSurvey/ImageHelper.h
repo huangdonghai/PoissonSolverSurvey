@@ -80,7 +80,8 @@ public:
 	static bool PoissonFilter(FloatImage& dst, ByteImage& src);
 	FloatImage JacobiCpu(int numIters=100);
 	FloatImage JacobiCuda(int numIters = 100);
-	FloatImage ConjudateGradientCuda(int numIters = 100);
+	FloatImage SorCuda(int numIters = 100);
+	FloatImage ConjugateGradientCuda(int numIters = 100);
 
 	float *Data() { return m_imageData; }
 

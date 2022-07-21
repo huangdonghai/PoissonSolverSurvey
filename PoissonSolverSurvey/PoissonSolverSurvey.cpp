@@ -13,7 +13,7 @@ int main()
 #if 0
 	const char* imageSolved = "yacht_jacobi.jpg";
 #else
-	const char* imageSolved = "yacht_cg.jpg";
+	const char* imageSolved = "yacht_sor.jpg";
 #endif
 
     int width, height, n;
@@ -34,7 +34,7 @@ int main()
 
 	stbi_write_jpg(imageOut, width, height, n, poissonData, 80);
 
-	auto solved = dst.ConjudateGradientCuda(2000);
+	auto solved = dst.SorCuda(200);
 
 	auto solvedData = solved.ToBytes(1, &avarage, false);
 

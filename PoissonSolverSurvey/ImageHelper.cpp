@@ -1,5 +1,6 @@
 
 #include <algorithm>
+#include <cmath>
 #include "ImageHelper.h"
 
 ByteImage::ByteImage(unsigned char* imageData, int width, int height, int channels)
@@ -230,16 +231,22 @@ FloatImage FloatImage::JacobiCpu(int numIters)
 }
 
 #include "cuda_runtime.h"
-cudaError_t jacobiWithCuda(int numIters, int width, int height, int channels, const float* b, float* result);
+cudaError_t jacobiWithCuda(int numIters, int width, int height, int channels, const float* b, float* result, bool isSOR);
 cudaError_t conjugateGradientWithCuda(int numIters, int width, int height, int channels, const float* hostb, float* hostresult);
 
 FloatImage FloatImage::JacobiCuda(int numIters)
 {
 	FloatImage temp1(m_width, m_height, m_channels);
-	jacobiWithCuda(numIters, m_width, m_height, m_channels, m_imageData, temp1.m_imageData);
+	jacobiWithCuda(numIters, m_width, m_height, m_channels, m_imageData, temp1.m_imageData, false);
 	return temp1;
 }
-FloatImage FloatImage::ConjudateGradientCuda(int numIters)
+FloatImage FloatImage::SorCuda(int numIters)
+{
+	FloatImage temp1(m_width, m_height, m_channels);
+	jacobiWithCuda(numIters, m_width, m_height, m_channels, m_imageData, temp1.m_imageData, true);
+	return temp1;
+}
+FloatImage FloatImage::ConjugateGradientCuda(int numIters)
 {
 	FloatImage temp1(m_width, m_height, m_channels);
 	conjugateGradientWithCuda(numIters, m_width, m_height, m_channels, m_imageData, temp1.m_imageData);
